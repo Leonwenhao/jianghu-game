@@ -10,10 +10,11 @@
 
 ### Task 001: Implement localStorage Persistence
 
-**Status**: Pending
+**Status**: Complete ✓
 **Milestone**: 0 - Foundation
 **Priority**: P0
 **Estimated Complexity**: Medium
+**Completed**: 2026-01-22
 
 #### Context
 The game currently resets on page refresh. Players lose all progress. This is the #1 blocker for any meaningful gameplay session. We need to persist the entire Zustand store to localStorage and rehydrate on load.
@@ -26,18 +27,61 @@ The game currently resets on page refresh. Players lose all progress. This is th
 5. Provide a `resetGame()` action that clears localStorage and resets state
 
 #### Acceptance Criteria
-- [ ] Refresh page mid-scene → returns to same scene, same panel
-- [ ] Player stats persist across refresh
-- [ ] Flags and choices persist across refresh
-- [ ] `resetGame()` clears everything and starts fresh
-- [ ] No console errors on fresh load (empty localStorage)
+- [x] Refresh page mid-scene → returns to same scene, same panel
+- [x] Player stats persist across refresh
+- [x] Flags and choices persist across refresh
+- [x] `resetGame()` clears everything and starts fresh
+- [x] No console errors on fresh load (empty localStorage)
 
-#### Files to Modify/Create
-- `stores/gameStore.ts` (add persistence middleware)
-- `lib/storage/persistence.ts` (new - persistence utilities)
+#### Files Modified/Created
+- `stores/gameStore.ts` (added persistence middleware, resetGame action)
+- `lib/storage/persistence.ts` (new - generic persistence middleware with versioning)
+
+#### Implementation Notes
+- Used custom Zustand middleware pattern instead of zustand/persist for more control
+- Versioned envelope allows future schema migrations
+- Debounced saves (500ms) prevent excessive writes
+- Deep merge preserves nested state structures
 
 #### Dependencies
 None
+
+---
+
+### Task 000.5: Fix Pre-existing Lint Errors
+
+**Status**: Pending
+**Milestone**: 0 - Foundation
+**Priority**: P0 (Blocking)
+**Estimated Complexity**: Small
+
+#### Context
+Pre-existing lint errors were discovered during Task 001 review. The errors in `MeditationMode.tsx` are actual bugs (React purity violations) that could cause unstable rendering behavior. These must be fixed before proceeding to maintain code quality baseline.
+
+#### Requirements
+1. Fix `Math.random()` calls during render in `MeditationMode.tsx`
+   - Pre-generate random values using `useMemo` or `useState` with initial value
+   - Particle positions should be stable across re-renders
+2. Fix unused import warnings:
+   - `CombatPanel.tsx`: Remove unused `CombatChoice`, `Panel` imports
+   - `MeditationMode.tsx`: Remove unused `ChoiceOption` import
+3. Replace `<img>` with `<Image>` from `next/image` or suppress if intentional:
+   - `CharacterPortrait.tsx`: Line 21
+   - `CombatPanel.tsx`: Line 37
+
+#### Acceptance Criteria
+- [ ] `npm run lint` passes with 0 errors
+- [ ] Warnings reduced (0 ideal, acceptable if `<img>` is intentional)
+- [ ] MeditationMode particles render stably without flickering
+- [ ] No functional regressions in affected components
+
+#### Files to Modify
+- `components/game/MeditationMode.tsx` (fix Math.random, remove unused import)
+- `components/game/CombatPanel.tsx` (remove unused imports, fix img)
+- `components/game/CharacterPortrait.tsx` (fix img)
+
+#### Dependencies
+None (blocking Task 002+)
 
 ---
 
@@ -1401,7 +1445,11 @@ None
 | Pending | 37 |
 | In Progress | 0 |
 | Review | 0 |
-| Complete | 0 |
+| Complete | 1 |
+
+**Completed Tasks**: T001
+
+**Note**: Task 000.5 was added to fix pre-existing lint errors (net task count: 38)
 
 ---
 

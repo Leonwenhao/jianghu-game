@@ -178,16 +178,43 @@ These flags set in prologue will affect Act 1 (documented here for future refere
 
 ## Changelog
 
-### [DATE] - V2 Planning Complete
+### 2026-01-22 - V2 Planning Complete
 - Created DEVELOPMENT_PLAN.md with 6 milestones
 - Created TASK_QUEUE.md with 37 tasks
 - Created SCRATCHPAD.md for notes
 - Research synthesized into actionable decisions
 
-### [DATE] - [MILESTONE COMPLETED]
-- Tasks completed: T001, T002, T003
-- Issues encountered: [description]
-- Changes from original plan: [if any]
+### 2026-01-22 - Task 001 Complete (Persistence)
+- **Task**: Implement localStorage persistence
+- **Completed by**: Codex
+- **Review result**: PASS - all acceptance criteria met
+- **Implementation highlights**:
+  - Custom Zustand middleware (not zustand/persist) for more control
+  - Versioned envelope allows future schema migrations
+  - Debounced saves (500ms) prevent excessive writes
+  - Deep merge preserves nested state structures
+- **Issue discovered**: Pre-existing lint errors in MeditationMode.tsx, CombatPanel.tsx, CharacterPortrait.tsx
+- **Decision**: Created Task 000.5 to fix lint errors before proceeding
+- **Files created**: `lib/storage/persistence.ts`, modified `stores/gameStore.ts`
+
+---
+
+## CTO Decisions Log
+
+### Decision 2026-01-22: Lint Error Handling
+**Context**: Task 001 review revealed pre-existing lint errors (4 errors, 5 warnings) in components not touched by the task.
+
+**Options considered**:
+1. Ignore and proceed — risk: errors in MeditationMode are actual bugs
+2. Have Codex fix as part of Task 002 — risk: scope creep, unclear ownership
+3. Create dedicated cleanup task — clean separation of concerns
+
+**Decision**: Option 3 — Created Task 000.5 as P0 blocking task
+
+**Rationale**:
+- The `Math.random()` in MeditationMode is a React purity violation that could cause visual glitches
+- Clean lint baseline makes future reviews easier
+- Keeps task scope clear (one task = one concern)
 
 ---
 
